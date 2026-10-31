@@ -1,0 +1,19 @@
+---
+import { logoSvg } from "../lib/recursos";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+const svg = logoSvg();
+---
+
+{
+  svg ? (
+    <span class:list={["inline-flex [&>svg]:h-full [&>svg]:w-auto", className]} set:html={svg} />
+  ) : (
+    // TODO: falta public/logo-savia.svg. Mientras tanto se muestra el nombre en texto.
+    <span class:list={["font-display font-semibold tracking-widest uppercase", className]}>Savia</span>
+  )
+}

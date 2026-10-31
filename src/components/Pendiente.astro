@@ -1,0 +1,24 @@
+---
+import { MOSTRAR_PENDIENTES } from "../data/site";
+
+interface Props {
+  texto: string;
+  class?: string;
+}
+
+const { texto, class: className = "" } = Astro.props;
+---
+
+{
+  MOSTRAR_PENDIENTES && (
+    <p
+      class:list={[
+        "caption-4 inline-flex w-fit items-center gap-2 rounded-md border border-dashed border-current px-2 py-1 opacity-80",
+        className,
+      ]}
+    >
+      <span class="caption-3">Pendiente</span>
+      <span>{texto}</span>
+    </p>
+  )
+}

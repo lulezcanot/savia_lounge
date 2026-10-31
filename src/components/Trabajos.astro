@@ -1,0 +1,73 @@
+---
+import { Picture } from "astro:assets";
+import InstagramIcon from "@phosphor-icons/core/assets/regular/instagram-logo.svg";
+import Pendiente from "./Pendiente.astro";
+import { negocio } from "../data/site";
+
+import nails01 from "../assets/photos/nails-01.jpg";
+import nails04 from "../assets/photos/nails-04.jpg";
+import nails07 from "../assets/photos/nails-07.jpg";
+import nails10 from "../assets/photos/nails-10.jpg";
+import nails13 from "../assets/photos/nails-13.jpg";
+import nails15 from "../assets/photos/nails-15.jpg";
+import letrero01 from "../assets/photos/nails-letrero-01.jpg";
+import letrero03 from "../assets/photos/nails-letrero-03.jpg";
+import letrero04 from "../assets/photos/nails-letrero-04.jpg";
+import mirada01 from "../assets/photos/mirada-01.jpg";
+import mirada02 from "../assets/photos/mirada-02.jpg";
+import mirada03 from "../assets/photos/mirada-03.jpg";
+
+// Los textos alternativos describen lo que se ve, sin nombrar técnica ni diseño.
+const trabajos = [
+  { src: nails04, alt: "Uñas en rojo intenso combinadas con lunares sobre fondo rosado" },
+  { src: mirada02, alt: "Primer plano de las cejas y pestañas de una clienta" },
+  { src: letrero01, alt: "Uñas en verde oliva frente al letrero iluminado de Savia" },
+  { src: nails07, alt: "Uñas nude con lunares negros junto a una gerbera naranja" },
+  { src: nails15, alt: "Uñas almendradas con punta blanca" },
+  { src: mirada01, alt: "Clienta con los ojos cerrados durante un tratamiento de pestañas" },
+  { src: nails10, alt: "Uñas con dibujos de fantasma y calabaza en naranja y nude" },
+  { src: letrero03, alt: "Uñas doradas con anillos frente al letrero de Savia" },
+  { src: nails01, alt: "Uñas largas en rosa con acabado perlado" },
+  { src: mirada03, alt: "Clienta con gorro desechable mostrando sus cejas" },
+  { src: nails13, alt: "Manos con punta rosada sobre la mesa de manicure" },
+  { src: letrero04, alt: "Uñas en azul frente al letrero de Savia" },
+];
+---
+
+<section id="trabajos" aria-labelledby="trabajos-titulo" class="bg-lino px-4 py-24 md:px-16">
+  <div class="mx-auto flex max-w-6xl flex-col gap-12">
+    <header data-reveal class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div class="flex max-w-170 flex-col gap-4">
+        <p class="caption-3 text-musgo">Trabajos recientes</p>
+        <h2 id="trabajos-titulo" class="heading-2 text-tinta">Hecho en Savia</h2>
+        <Pendiente class="text-tinta-suave" texto="Nombre del servicio de cada trabajo." />
+      </div>
+      <a
+        href={negocio.instagramUrl}
+        target="_blank"
+        rel="noopener"
+        class="title-4 inline-flex w-fit items-center gap-2 rounded-full px-3 py-2 text-tinta transition-colors duration-300 ease-savia hover:bg-marfil active:scale-98"
+      >
+        <InstagramIcon class="size-5" aria-hidden="true" />
+        Más en {negocio.instagramUsuario}
+      </a>
+    </header>
+
+    <ul class="columns-2 gap-4 md:columns-3 lg:columns-4">
+      {
+        trabajos.map((t) => (
+          <li data-reveal class="mb-4 break-inside-avoid">
+            <Picture
+              src={t.src}
+              alt={t.alt}
+              widths={[320, 480, 720]}
+              sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+              formats={["avif", "webp"]}
+              class="w-full rounded-2xl"
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

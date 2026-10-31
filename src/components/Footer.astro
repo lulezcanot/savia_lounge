@@ -1,0 +1,18 @@
+---
+import Logo from "./Logo.astro";
+import Pendiente from "./Pendiente.astro";
+import { negocio } from "../data/site";
+---
+
+<footer class="bg-bosque px-4 pb-12 text-marfil md:px-16">
+  <div class="mx-auto flex max-w-6xl flex-col gap-6 border-t border-marfil/15 pt-8 md:flex-row md:items-center md:justify-between">
+    <div class="flex items-center gap-4">
+      <Logo class="h-6 text-2xl leading-6" />
+      <p class="caption-2 text-marfil/70">
+        {negocio.direccionCorta}, {negocio.ciudad} · {negocio.horarioCorto}
+      </p>
+    </div>
+    <!-- TODO: añadir Política de privacidad y Libro de Reclamaciones cuando Savia los tenga. No enlazar antes. -->
+    <Pendiente class="text-marfil/70" texto="Política de privacidad y Libro de Reclamaciones." />
+  </div>
+</footer>

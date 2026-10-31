@@ -1,0 +1,235 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+/* Fuentes servidas en local y recortadas a latín (incluye tildes y ñ).
+   Archivos copiados de @fontsource a public/fonts. */
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-latin-500-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Jost";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/jost-latin-wght-normal.woff2") format("woff2-variations");
+}
+
+@theme {
+  --color-marfil: #f5efe4;
+  --color-lino: #eae0cf;
+  --color-tinta: #262820;
+  --color-tinta-suave: #5e5a4e;
+  --color-bosque: #2d3a27;
+  --color-musgo: #5b6b34;
+  --color-oro: #c9a04e;
+
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
+
+  --ease-savia: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    font-synthesis: none; /* sin negritas ni cursivas sintéticas */
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--color-marfil);
+    color: var(--color-tinta);
+  }
+  body {
+    font-family: var(--font-sans);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-oro);
+    outline-offset: 2px;
+  }
+}
+
+/* Estilos de texto (skill landing-page-design, B1). Titulares en Cormorant,
+   texto en Jost. */
+@utility heading-1 {
+  font-family: var(--font-display);
+  font-size: var(--text-6xl);
+  line-height: 1;
+  font-weight: 600;
+  text-wrap: balance;
+}
+@utility heading-2 {
+  font-family: var(--font-display);
+  font-size: var(--text-5xl);
+  line-height: 1;
+  font-weight: 600;
+  text-wrap: balance;
+}
+@utility heading-3 {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  line-height: 40px;
+  font-weight: 600;
+  text-wrap: balance;
+}
+@utility heading-4 {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  line-height: 36px;
+  font-weight: 600;
+  text-wrap: balance;
+}
+@utility heading-5 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: 32px;
+  font-weight: 600;
+  text-wrap: balance;
+}
+@utility heading-6 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: 28px;
+  font-weight: 600;
+  text-wrap: balance;
+}
+@utility title-1 {
+  font-size: var(--text-xl);
+  line-height: 28px;
+  font-weight: 500;
+}
+@utility title-2 {
+  font-size: var(--text-lg);
+  line-height: 28px;
+  font-weight: 500;
+}
+@utility title-3 {
+  font-size: var(--text-base);
+  line-height: 24px;
+  font-weight: 500;
+}
+@utility title-4 {
+  font-size: var(--text-sm);
+  line-height: 20px;
+  font-weight: 500;
+}
+@utility title-5 {
+  font-size: var(--text-xs);
+  line-height: 16px;
+  font-weight: 500;
+}
+@utility body-2 {
+  font-size: var(--text-base);
+  line-height: 24px;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+@utility body-3 {
+  font-size: var(--text-base);
+  line-height: 24px;
+  font-weight: 400;
+  text-wrap: pretty;
+}
+@utility body-5 {
+  font-size: var(--text-sm);
+  line-height: 20px;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+@utility body-6 {
+  font-size: var(--text-sm);
+  line-height: 20px;
+  font-weight: 400;
+  text-wrap: pretty;
+}
+@utility button-md {
+  font-size: var(--text-base);
+  line-height: 24px;
+  font-weight: 600;
+}
+@utility button-sm {
+  font-size: var(--text-sm);
+  line-height: 20px;
+  font-weight: 600;
+}
+@utility caption-2 {
+  font-size: var(--text-sm);
+  line-height: 20px;
+  font-weight: 400;
+}
+@utility caption-3 {
+  font-size: var(--text-xs);
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+@utility caption-4 {
+  font-size: var(--text-xs);
+  line-height: 16px;
+  font-weight: 500;
+}
+/* Excepción pedida por Savia: líneas de marca en la cursiva real de Cormorant. */
+@utility brand-line {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-2xl);
+  line-height: 32px;
+  font-weight: 500;
+  color: var(--color-musgo);
+  text-wrap: balance;
+}
+/* Números grandes en oro (solo como acento). */
+@utility numeral {
+  font-family: var(--font-display);
+  font-size: var(--text-6xl);
+  line-height: 1;
+  font-weight: 500;
+  color: var(--color-oro);
+  font-variant-numeric: lining-nums;
+}
+
+/* Revelado al entrar en pantalla (B7). Solo se oculta si hay JS. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 700ms var(--ease-savia),
+    transform 700ms var(--ease-savia);
+}
+.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Frase grande: cada palabra se enciende al cruzar la línea de activación (B11). */
+.js [data-tagline] .word {
+  opacity: 0.3;
+  transition: opacity 500ms var(--ease-savia);
+}
+.js [data-tagline] .word.is-on {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    transform: none;
+  }
+  .js [data-tagline] .word {
+    opacity: 1;
+  }
+}

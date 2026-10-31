@@ -1,0 +1,168 @@
+---
+import { Picture } from "astro:assets";
+import FilePdfIcon from "@phosphor-icons/core/assets/regular/file-pdf.svg";
+import Pendiente from "./Pendiente.astro";
+import TarjetaDestacado from "./TarjetaDestacado.astro";
+import { carta, destacados } from "../data/carta";
+import { existe, recursos } from "../lib/recursos";
+import visagismo from "../assets/photos/mirada-visagismo-antes-despues.jpg";
+
+const hayPdf = existe(recursos.carta);
+---
+
+<section id="carta" aria-labelledby="carta-titulo" class="bg-marfil px-4 py-24 md:px-16">
+  <div class="mx-auto flex max-w-6xl flex-col gap-16">
+    <header data-reveal class="flex max-w-170 flex-col gap-4">
+      <p class="caption-3 text-musgo">Carta de octubre</p>
+      <h2 id="carta-titulo" class="heading-2 text-tinta">Elige tu ritual</h2>
+      <p class="body-3 text-tinta-suave">
+        Nails desde S/ 25 y Mirada desde S/ 15. Empieza por los favoritos o recorre la carta completa.
+      </p>
+    </header>
+
+    <!-- Destacados: cuatro tarjetas y, al lado, Visagismo con su foto de antes y después. -->
+    <div class="grid gap-4 lg:grid-cols-3">
+      <ul class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
+        {destacados.slice(0, 4).map((d) => <TarjetaDestacado {...d} />)}
+      </ul>
+      <div class="flex flex-col gap-4">
+        <Picture
+          data-reveal
+          src={visagismo}
+          alt="Rostro de una clienta antes y después del visagismo de cejas en Savia"
+          widths={[400, 640, 900]}
+          sizes="(min-width: 1024px) 33vw, 100vw"
+          formats={["avif", "webp"]}
+          class="aspect-4/3 w-full rounded-2xl object-cover"
+        />
+        <ul class="flex">
+          <TarjetaDestacado {...destacados[4]} />
+        </ul>
+      </div>
+    </div>
+
+    <!-- Carta completa -->
+    <div class="flex flex-col gap-8">
+      <div role="tablist" aria-label="Líneas de servicio" class="flex w-fit gap-2 rounded-full bg-lino p-1">
+        {
+          carta.map((linea, i) => (
+            <button
+              type="button"
+              role="tab"
+              id={`tab-${linea.id}`}
+              aria-controls={`panel-${linea.id}`}
+              aria-selected={i === 0 ? "true" : "false"}
+              tabindex={i === 0 ? 0 : -1}
+              data-tab
+              class="button-md rounded-full px-6 py-2 text-tinta-suave transition-colors duration-300 ease-savia hover:text-tinta aria-selected:bg-bosque aria-selected:text-marfil"
+            >
+              {linea.nombre}
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        carta.map((linea, i) => (
+          <div
+            role="tabpanel"
+            id={`panel-${linea.id}`}
+            aria-labelledby={`tab-${linea.id}`}
+            tabindex="0"
+            hidden={i !== 0}
+            class="flex flex-col gap-12"
+          >
+            <div class="flex flex-col gap-2">
+              <p class="brand-line md:text-3xl md:leading-9">{linea.lema}</p>
+              <p class="caption-3 text-tinta-suave">{linea.desde}</p>
+              {linea.id === "mirada" && (
+                <Pendiente
+                  class="mt-2 text-tinta-suave"
+                  texto="Copiar de la carta en PDF las descripciones cortas de cada servicio de Mirada."
+                />
+              )}
+            </div>
+
+            <div class="gap-16 md:columns-2">
+              {linea.categorias.map((cat) => (
+                <section class="mb-12 break-inside-avoid">
+                  <h3 class="heading-5 text-tinta">{cat.nombre}</h3>
+                  {cat.nota && <p class="caption-2 mt-1 text-musgo">{cat.nota}</p>}
+                  <ul class="mt-4 flex flex-col">
+                    {cat.servicios.map((s) => (
+                      <li class="flex items-baseline justify-between gap-4 border-b border-tinta/10 py-3">
+                        <div class="flex flex-col gap-1">
+                          <span class="title-3 text-tinta">{s.nombre}</span>
+                          {s.nota && <span class="caption-2 text-tinta-suave">{s.nota}</span>}
+                          {s.descripcion && <span class="caption-2 text-tinta-suave">{s.descripcion}</span>}
+                        </div>
+                        <span class="body-2 whitespace-nowrap text-tinta tabular-nums">{s.precio}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+
+      <!-- Acción secundaria, solo aquí abajo. -->
+      <div class="flex flex-col gap-2">
+        {
+          hayPdf ? (
+            <a
+              href={recursos.carta}
+              download
+              class="button-md inline-flex w-fit items-center gap-2 rounded-full border border-tinta/20 px-3 py-2 text-tinta transition-colors duration-300 ease-savia hover:bg-lino active:scale-98"
+            >
+              <FilePdfIcon class="size-5" aria-hidden="true" />
+              Descargar la carta completa
+            </a>
+          ) : (
+            <>
+              <span
+                aria-disabled="true"
+                class="button-md inline-flex w-fit cursor-not-allowed items-center gap-2 rounded-full border border-tinta/10 px-3 py-2 text-tinta/40"
+              >
+                <FilePdfIcon class="size-5" aria-hidden="true" />
+                Descargar la carta completa
+              </span>
+              <Pendiente class="text-tinta-suave" texto="Subir public/carta-savia-octubre.pdf; el botón se activa solo." />
+            </>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  for (const lista of document.querySelectorAll<HTMLElement>('[role="tablist"]')) {
+    const pestanas = [...lista.querySelectorAll<HTMLButtonElement>("[data-tab]")];
+
+    const seleccionar = (pestana: HTMLButtonElement) => {
+      for (const p of pestanas) {
+        const activa = p === pestana;
+        p.setAttribute("aria-selected", String(activa));
+        p.tabIndex = activa ? 0 : -1;
+        document.getElementById(p.getAttribute("aria-controls")!)!.hidden = !activa;
+      }
+      pestana.focus();
+      // Cambia la altura de la página: recalcula las posiciones de las animaciones.
+      ScrollTrigger.refresh();
+    };
+
+    for (const [i, p] of pestanas.entries()) {
+      p.addEventListener("click", () => seleccionar(p));
+      p.addEventListener("keydown", (e) => {
+        const salto = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!salto) return;
+        e.preventDefault();
+        seleccionar(pestanas[(i + salto + pestanas.length) % pestanas.length]);
+      });
+    }
+  }
+</script>

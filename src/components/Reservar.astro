@@ -1,0 +1,34 @@
+---
+import BotonReservar from "./BotonReservar.astro";
+import Pendiente from "./Pendiente.astro";
+import { pasos } from "../data/site";
+---
+
+<section id="reservar" aria-labelledby="reservar-titulo" class="bg-marfil px-4 py-24 md:px-16">
+  <div class="mx-auto flex max-w-6xl flex-col gap-12">
+    <header data-reveal class="flex max-w-170 flex-col gap-4">
+      <p class="caption-3 text-musgo">Cómo reservar</p>
+      <h2 id="reservar-titulo" class="heading-2 text-tinta">Tu cita en tres pasos</h2>
+      <p class="body-3 text-tinta-suave">Reservar es solo escribir por WhatsApp: sin formularios ni pagos en la web.</p>
+    </header>
+
+    <ol class="grid gap-8 md:grid-cols-3">
+      {
+        pasos.map((paso, i) => (
+          <li data-reveal class="flex flex-col gap-4">
+            <span class="numeral" aria-hidden="true">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <h3 class="heading-5 text-tinta">{paso.titulo}</h3>
+            <p class="body-3 text-tinta-suave">{paso.texto}</p>
+            {paso.pendiente && <Pendiente class="text-tinta-suave" texto={paso.pendiente} />}
+          </li>
+        ))
+      }
+    </ol>
+
+    <div data-reveal>
+      <BotonReservar />
+    </div>
+  </div>
+</section>

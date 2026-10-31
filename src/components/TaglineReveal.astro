@@ -1,0 +1,45 @@
+---
+const lineas = ["Manos que reflejan tu esencia.", "Cejas y pestañas en equilibrio con tu belleza."];
+---
+
+<section aria-label="Lema de Savia" class="bg-lino px-4 py-24 md:px-16 md:py-24">
+  <p data-tagline class="mx-auto heading-3 max-w-170 text-center text-tinta md:heading-1">
+    {
+      lineas.map((linea, i) => (
+        <>
+          {linea.split(" ").map((palabra) => (
+            <>
+              <span class="word">{palabra}</span>{" "}
+            </>
+          ))}
+          {i < lineas.length - 1 && <br />}
+        </>
+      ))
+    }
+  </p>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  for (const bloque of document.querySelectorAll<HTMLElement>("[data-tagline]")) {
+    const palabras = [...bloque.querySelectorAll<HTMLElement>(".word")];
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      palabras.forEach((p) => p.classList.add("is-on"));
+      continue;
+    }
+    // Las palabras se encienden una a una, en orden de lectura, al cruzar la línea de activación.
+    ScrollTrigger.create({
+      trigger: bloque,
+      start: "top 75%",
+      end: "bottom 45%",
+      onUpdate: ({ progress }) => {
+        const encendidas = Math.round(progress * palabras.length);
+        palabras.forEach((p, i) => p.classList.toggle("is-on", i < encendidas));
+      },
+    });
+  }
+</script>

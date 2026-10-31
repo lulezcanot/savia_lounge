@@ -1,0 +1,21 @@
+---
+interface Props {
+  linea: string;
+  nombre: string;
+  precio: string;
+  nota?: string;
+  descripcion?: string;
+}
+
+const { linea, nombre, precio, nota, descripcion } = Astro.props;
+---
+
+<li data-reveal class="flex w-full flex-col gap-3 rounded-2xl bg-lino p-6">
+  <p class="caption-3 text-musgo">{linea}</p>
+  <h3 class="heading-5 text-tinta">{nombre}</h3>
+  {(descripcion || nota) && <p class="body-6 text-tinta-suave">{descripcion ?? nota}</p>}
+  <p class="title-3 mt-auto flex items-center gap-3 pt-2 text-tinta">
+    <span class="h-px w-8 bg-oro" aria-hidden="true"></span>
+    {precio}
+  </p>
+</li>

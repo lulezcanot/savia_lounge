@@ -1,0 +1,148 @@
+---
+import Logo from "./Logo.astro";
+import BotonReservar from "./BotonReservar.astro";
+
+const enlaces = [
+  { href: "#recorrido", texto: "Recorrido" },
+  { href: "#carta", texto: "Carta" },
+  { href: "#trabajos", texto: "Trabajos" },
+  { href: "#reservar", texto: "Cómo reservar" },
+  { href: "#visitanos", texto: "Visítanos" },
+];
+---
+
+<header class="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4 md:justify-start md:px-6">
+  <nav
+    aria-label="Principal"
+    class="pointer-events-auto flex items-center gap-3 rounded-full border border-tinta/10 bg-marfil/75 py-2 pr-2 pl-4 shadow-sm backdrop-blur-md md:gap-6"
+  >
+    <a href="#recorrido" class="flex h-5 items-center text-tinta" aria-label="Savia Lounge, ir al inicio">
+      <Logo class="h-5 text-xl leading-5" />
+    </a>
+
+    <ul class="hidden items-center gap-4 md:flex">
+      {
+        enlaces.slice(1).map((e) => (
+          <li>
+            <a
+              href={e.href}
+              data-nav-link
+              class="title-4 rounded-full px-2 py-1 text-tinta-suave transition-colors duration-300 ease-savia hover:text-tinta aria-[current=true]:text-tinta aria-[current=true]:underline aria-[current=true]:decoration-oro aria-[current=true]:underline-offset-4"
+            >
+              {e.texto}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <BotonReservar tamano="sm" texto="Reservar" />
+
+    <button
+      type="button"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="menu-movil"
+      class="relative grid size-9 place-items-center rounded-full text-tinta transition-colors duration-300 ease-savia hover:bg-lino active:scale-98 md:hidden"
+    >
+      <span class="sr-only">Abrir menú</span>
+      <span
+        aria-hidden="true"
+        class="absolute h-0.5 w-4 -translate-y-1 rounded-full bg-current transition-transform duration-500 ease-savia"
+        data-menu-line="1"></span>
+      <span
+        aria-hidden="true"
+        class="absolute h-0.5 w-4 translate-y-1 rounded-full bg-current transition-transform duration-500 ease-savia"
+        data-menu-line="2"></span>
+    </button>
+  </nav>
+</header>
+
+<div
+  id="menu-movil"
+  data-menu-panel
+  hidden
+  class="fixed inset-0 z-40 flex flex-col justify-center gap-8 bg-marfil/95 px-8 backdrop-blur-xl md:hidden"
+>
+  <ul class="flex flex-col gap-4">
+    {
+      enlaces.map((e) => (
+        <li data-menu-item class="opacity-0">
+          <a href={e.href} data-nav-link class="heading-3 text-tinta aria-[current=true]:text-musgo">
+            {e.texto}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div data-menu-item class="opacity-0">
+    <BotonReservar />
+  </div>
+</div>
+
+<script>
+  import { gsap } from "gsap";
+
+  const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]")!;
+  const panel = document.querySelector<HTMLElement>("[data-menu-panel]")!;
+  const [linea1, linea2] = toggle.querySelectorAll<HTMLElement>("[data-menu-line]");
+  const items = panel.querySelectorAll<HTMLElement>("[data-menu-item]");
+  const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const curva = "cubic-bezier(0.22,1,0.36,1)";
+
+  function abrir(abierto: boolean) {
+    toggle.setAttribute("aria-expanded", String(abierto));
+    toggle.querySelector(".sr-only")!.textContent = abierto ? "Cerrar menú" : "Abrir menú";
+    // Las dos líneas se transforman en una X en lugar de cambiar de icono.
+    linea1.style.transform = abierto ? "rotate(45deg)" : "";
+    linea2.style.transform = abierto ? "rotate(-45deg)" : "";
+    document.documentElement.classList.toggle("menu-abierto", abierto);
+
+    if (abierto) {
+      panel.hidden = false;
+      gsap.fromTo(
+        items,
+        { opacity: 0, y: reducido ? 0 : 24 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: curva,
+          // 60 ms entre enlaces, sin pasar de 400 ms en total.
+          stagger: { each: Math.min(0.06, 0.4 / items.length) },
+        },
+      );
+    } else {
+      gsap.to(items, { opacity: 0, duration: 0.2, onComplete: () => (panel.hidden = true) });
+    }
+  }
+
+  toggle.addEventListener("click", () => abrir(toggle.getAttribute("aria-expanded") !== "true"));
+  panel.addEventListener("click", (e) => {
+    if ((e.target as HTMLElement).closest("a")) abrir(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+      abrir(false);
+      toggle.focus();
+    }
+  });
+
+  // Marca en la navegación la sección visible.
+  const enlaces = document.querySelectorAll<HTMLAnchorElement>("[data-nav-link]");
+  const secciones = [...new Set([...enlaces].map((a) => a.getAttribute("href")!))]
+    .map((h) => document.querySelector<HTMLElement>(h))
+    .filter((s): s is HTMLElement => !!s);
+
+  const observador = new IntersectionObserver(
+    (entradas) => {
+      for (const entrada of entradas) {
+        if (!entrada.isIntersecting) continue;
+        const id = `#${entrada.target.id}`;
+        enlaces.forEach((a) => a.setAttribute("aria-current", String(a.getAttribute("href") === id)));
+      }
+    },
+    { rootMargin: "-45% 0px -50% 0px" },
+  );
+  secciones.forEach((s) => observador.observe(s));
+</script>

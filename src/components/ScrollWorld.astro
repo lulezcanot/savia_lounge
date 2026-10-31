@@ -1,0 +1,193 @@
+---
+import { getImage } from "astro:assets";
+import MapPinIcon from "@phosphor-icons/core/assets/regular/map-pin.svg";
+import ArrowDownIcon from "@phosphor-icons/core/assets/regular/arrow-down.svg";
+import BotonReservar from "./BotonReservar.astro";
+import Pendiente from "./Pendiente.astro";
+import { negocio, paradas, recorrido } from "../data/site";
+import posterImg from "../assets/photos/recorrido-poster.jpg";
+
+const poster = await getImage({ src: posterImg, width: 1280, format: "webp" });
+const [hero, ...resto] = paradas;
+// Altura de cada parada proporcional a la duración de su clip (mínimo una pantalla).
+const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPorSegundo) * 100}svh`;
+---
+
+<section id="recorrido" aria-label="Recorrido por Savia Lounge" data-scroll-world class="relative grid grid-cols-1">
+  <!-- Capa de fondo: queda fija mientras se recorre la sección. -->
+  <div aria-hidden="true" class="sticky top-0 col-start-1 row-start-1 h-svh self-start overflow-hidden bg-tinta">
+    {
+      paradas.map((p, i) => (
+        <video
+          data-sw-clip
+          data-duracion={p.duracion}
+          muted
+          playsinline
+          preload={i < 2 ? "auto" : "metadata"}
+          disablepictureinpicture
+          disableremoteplayback
+          poster={i === 0 ? poster.src : undefined}
+          class="absolute inset-0 size-full object-cover"
+          style={i === 0 ? undefined : "opacity: 0"}
+        >
+          <source src={`${p.clip}.mp4`} type="video/mp4" />
+        </video>
+      ))
+    }
+    <div class="absolute inset-0 bg-tinta/20"></div>
+
+    <ol class="absolute top-1/2 right-6 hidden -translate-y-1/2 flex-col items-end gap-3 lg:flex">
+      {
+        paradas.map((p, i) => (
+          <li data-sw-dot class="title-5 flex items-center gap-3 text-marfil/60 transition-colors duration-500 ease-savia data-active:text-marfil">
+            <span>{p.lugar}</span>
+            <span class="font-display text-base text-oro">{String(i + 1).padStart(2, "0")}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="caption-4 absolute right-4 bottom-4 rounded-full bg-tinta/50 px-3 py-1 text-marfil md:right-6">
+      {recorrido.aviso}
+    </p>
+  </div>
+
+  <!-- Capa de texto: una parada por clip. -->
+  <div class="col-start-1 row-start-1">
+    <article data-sw-stop style={alto(hero.duracion)}>
+      <div class="sticky top-0 flex min-h-svh items-end px-4 pt-24 pb-16 md:items-center md:px-16 md:pb-0">
+        <div class="flex max-w-170 flex-col gap-6 rounded-3xl bg-marfil/85 p-6 backdrop-blur-md md:p-10">
+          <p class="caption-3 text-musgo">Uñas, cejas y pestañas · {negocio.ciudad}</p>
+          <h1 class="heading-3 bg-linear-to-r from-tinta to-tinta-suave bg-clip-text pb-1 text-transparent md:heading-1">
+            Pequeños rituales<br class="hidden md:inline" /> que nutren tu belleza
+          </h1>
+          <p class="body-3 max-w-170 text-tinta-suave md:title-2">{negocio.subtitulo}</p>
+          <div class="flex flex-col gap-4">
+            <BotonReservar class="w-fit" />
+            <p class="caption-2 flex items-start gap-2 text-tinta-suave">
+              <MapPinIcon class="mt-0.5 size-4 shrink-0 text-musgo" aria-hidden="true" />
+              <span>{negocio.direccionCorta}, {negocio.zona}, {negocio.ciudad} · {negocio.horarioCorto}</span>
+            </p>
+            <p class="caption-4 text-tinta-suave">Nails desde S/ 25 · Mirada desde S/ 15</p>
+          </div>
+          <p class="caption-4 hidden items-center gap-2 text-tinta-suave md:flex">
+            <ArrowDownIcon class="size-4" aria-hidden="true" />
+            Desliza para recorrer el salón
+          </p>
+        </div>
+      </div>
+    </article>
+
+    {
+      resto.map((p, i) => (
+        <article data-sw-stop id={`parada-${p.id}`} style={alto(p.duracion)}>
+          <div
+            class:list={[
+              "sticky top-0 flex min-h-svh items-end px-4 pt-24 pb-16 md:px-16",
+              // En el cierre, la tarjeta baja para no tapar el logo del render.
+              p.reservar ? "md:pb-16" : "md:items-center md:pb-0",
+            ]}
+          >
+            <div data-reveal class="flex max-w-xl flex-col gap-4 rounded-3xl bg-marfil/85 p-6 backdrop-blur-md md:p-8">
+              <div class="flex items-end gap-4">
+                <span class="numeral" aria-hidden="true">{String(i + 2).padStart(2, "0")}</span>
+                <p class="caption-3 pb-2 text-musgo">{p.lugar}</p>
+              </div>
+              <h2 class="heading-3 text-tinta">{p.titulo}</h2>
+              <p class="body-3 text-tinta-suave">{p.texto}</p>
+              {p.detalle && (
+                <p class="title-4 flex items-center gap-3 text-tinta">
+                  <span class="h-px w-8 bg-oro" aria-hidden="true" />
+                  {p.detalle}
+                </p>
+              )}
+              {p.pendiente && <Pendiente texto={p.pendiente} class="text-tinta-suave" />}
+              {p.reservar && <BotonReservar class="w-fit" />}
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const seccion = document.querySelector<HTMLElement>("[data-scroll-world]");
+
+  if (seccion) {
+    const paradas = [...seccion.querySelectorAll<HTMLElement>("[data-sw-stop]")];
+    const puntos = [...seccion.querySelectorAll<HTMLElement>("[data-sw-dot]")];
+    const clips = [...seccion.querySelectorAll<HTMLVideoElement>("[data-sw-clip]")];
+    const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ultima = paradas.length - 1;
+    const duracion = (v: HTMLVideoElement) =>
+      Number.isFinite(v.duration) && v.duration > 0 ? v.duration : Number(v.dataset.duracion);
+
+    // Cada parada es el tramo de su clip: empieza cuando su borde superior llega arriba.
+    const tramos = paradas.map((p, i) =>
+      ScrollTrigger.create({ trigger: p, start: "top top", end: i === ultima ? "bottom bottom" : "bottom top" }),
+    );
+
+    let activa = -1;
+    let objetivo = 0;
+    let actual = 0;
+
+    function activar(i: number) {
+      if (i === activa) return;
+      activa = i;
+      // Los clips se cortaron en pausas y son continuos: el cambio es directo, sin fundido.
+      clips.forEach((c, j) => (c.style.opacity = j === i ? "1" : "0"));
+      puntos.forEach((p, j) => p.toggleAttribute("data-active", j === i));
+      // Carga el clip activo (por si se llegó de un salto) y pide el siguiente antes de llegar a él.
+      for (const clip of [clips[i], clips[i + 1]]) {
+        if (clip && clip.preload !== "auto") {
+          clip.preload = "auto";
+          clip.load();
+        }
+      }
+      actual = objetivo;
+      if (clips[i].readyState >= 1) clips[i].currentTime = actual;
+    }
+
+    function actualizar(y: number) {
+      let i = 0;
+      tramos.forEach((t, j) => {
+        if (y >= t.start) i = j;
+      });
+      const { start, end } = tramos[i];
+      const progreso = Math.min(Math.max((y - start) / Math.max(end - start, 1), 0), 1);
+      objetivo = reducido ? 0 : progreso * (duracion(clips[i]) - 0.05);
+      activar(i);
+    }
+
+    ScrollTrigger.create({
+      trigger: seccion,
+      start: "top bottom",
+      end: "bottom top",
+      onUpdate: (self) => actualizar(self.scroll()),
+      onRefresh: (self) => actualizar(self.scroll()),
+    });
+    actualizar(window.scrollY);
+
+    // Safari en iOS necesita un play/pause para permitir mover currentTime.
+    clips.forEach((c) =>
+      c.addEventListener("loadedmetadata", () => c.play().then(() => c.pause()).catch(() => {}), { once: true }),
+    );
+
+    if (!reducido) {
+      // Suaviza el avance y evita encadenar saltos mientras el navegador aún busca el cuadro.
+      gsap.ticker.add(() => {
+        const clip = clips[activa];
+        if (!clip) return;
+        actual += (objetivo - actual) * 0.2;
+        if (clip.readyState >= 2 && !clip.seeking && Math.abs(clip.currentTime - actual) > 1 / 60) {
+          clip.currentTime = actual;
+        }
+      });
+    }
+  }
+</script>

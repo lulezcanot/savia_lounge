@@ -1,0 +1,25 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Logo from "../components/Logo.astro";
+import BotonReservar from "../components/BotonReservar.astro";
+---
+
+<Layout title="Página no encontrada | Savia Lounge" noindex>
+  <main id="contenido" class="grid min-h-svh place-items-center bg-marfil px-4 py-24">
+    <div class="flex max-w-170 flex-col items-center gap-6 text-center">
+      <Logo class="h-8 text-3xl leading-8 text-tinta" />
+      <p class="numeral">404</p>
+      <h1 class="heading-3 text-tinta">Esta página no existe</h1>
+      <p class="body-3 text-tinta-suave">Puede que el enlace haya cambiado. Vuelve al inicio o escríbenos para reservar.</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a
+          href="/"
+          class="button-md rounded-full border border-tinta/20 px-3 py-2 text-tinta transition-colors duration-300 ease-savia hover:bg-lino active:scale-98"
+        >
+          Volver al inicio
+        </a>
+        <BotonReservar />
+      </div>
+    </div>
+  </main>
+</Layout>

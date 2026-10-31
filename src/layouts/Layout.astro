@@ -1,23 +1,152 @@
+---
+import "../styles/global.css";
+import { getImage } from "astro:assets";
+import { negocio, preguntas } from "../data/site";
+import { existe, recursos } from "../lib/recursos";
+import ogFoto from "../assets/photos/local-letrero-manos.jpg";
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = "Savia Lounge | Uñas, cejas y pestañas en Trujillo",
+  description = "Manicure, pedicure, laminado de cejas, lifting y extensiones de pestañas en Jr. Zepita 527A, Centro Cívico, Trujillo. Nails desde S/ 25. Reserva por WhatsApp.",
+  noindex = false,
+} = Astro.props;
+
+// TODO: definir `site` en astro.config.mjs con el dominio final para que og:image y canonical sean absolutos.
+const og = await getImage({ src: ogFoto, width: 1200, height: 630, fit: "cover", format: "jpg" });
+const ogUrl = Astro.site ? new URL(og.src, Astro.site).href : og.src;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const hayFavicon = existe(recursos.favicon);
+
+const negocioLd = {
+  "@context": "https://schema.org",
+  "@type": "NailSalon",
+  name: negocio.nombre,
+  description: negocio.subtitulo,
+  telephone: negocio.telefono,
+  image: ogUrl,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: negocio.direccion,
+    addressLocality: negocio.ciudad,
+    addressCountry: "PE",
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "09:00",
+      closes: "20:00",
+    },
+  ],
+  hasMap: negocio.mapsUrl,
+  sameAs: [negocio.instagramUrl],
+  priceRange: "S/ 5 a S/ 160",
+};
+
+// Solo las preguntas con respuesta confirmada.
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: preguntas
+    .filter((p) => p.respuesta)
+    .map((p) => ({
+      "@type": "Question",
+      name: p.pregunta,
+      acceptedAnswer: { "@type": "Answer", text: p.respuesta },
+    })),
+};
+---
+
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#F5EFE4" />
+    {
+      hayFavicon ? (
+        <link rel="icon" type="image/svg+xml" href={recursos.favicon} />
+      ) : (
+        // TODO: falta public/favicon-savia.svg (la A sin travesaño). Mientras tanto, el de Astro.
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      )
+    }
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preload" href="/fonts/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jost-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(negocioLd)} />}
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
+  </head>
+  <body class="bg-marfil text-tinta">
+    <a
+      href="#contenido"
+      class="button-sm sr-only z-60 rounded-full bg-bosque px-3 py-2 text-marfil focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+    >
+      Saltar al contenido
+    </a>
+    <slot />
+  </body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+<script>
+  import Lenis from "lenis";
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Scroll suave con Lenis, sincronizado con ScrollTrigger. Desactivado si se pide menos movimiento.
+  if (!reducido) {
+    const lenis = new Lenis({ anchors: true, lerp: 0.1 });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((tiempo) => lenis.raf(tiempo * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    // Con el menú móvil abierto no se desplaza la página de fondo.
+    new MutationObserver(() => {
+      document.documentElement.classList.contains("menu-abierto") ? lenis.stop() : lenis.start();
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  }
+
+  // Revelado de secciones: suben 32 px y aparecen una sola vez.
+  const observador = new IntersectionObserver(
+    (entradas) => {
+      for (const entrada of entradas) {
+        if (!entrada.isIntersecting) continue;
+        entrada.target.classList.add("is-in");
+        observador.unobserve(entrada.target);
+      }
+    },
+    { rootMargin: "0px 0px -10% 0px" },
+  );
+  document.querySelectorAll("[data-reveal]").forEach((el) => observador.observe(el));
+
+  // Abrir una pregunta cambia la altura de la página.
+  document.addEventListener("toggle", () => ScrollTrigger.refresh(), true);
+</script>
