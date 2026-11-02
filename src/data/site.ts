@@ -19,6 +19,14 @@ export const negocio = {
   titular: "Pequeños rituales que nutren tu belleza",
   subtitulo:
     "Uñas, cejas y pestañas en un lounge pensado para que te tomes tu tiempo, con una bebida en la mano.",
+  /** Frase de cierre en Visítanos. */
+  invitacion: "Desconecta del ritmo de cada día, disfruta de una bebida y regálate un momento solo para ti.",
+};
+
+/** Tarjeta de bienvenida (la que se entrega en el local), mostrada como modal. */
+export const descuento = {
+  porcentaje: "10%",
+  mensaje: "Hola Savia, es mi primera visita y quiero reservar una cita con el 10% de descuento",
 };
 
 /**
@@ -88,7 +96,6 @@ export const paradas: Parada[] = [
     titulo: "Una mirada natural y duradera",
     texto:
       "El laminado de cejas y el lifting de pestañas se hacen con productos italianos de alta gama, con resultados naturales, seguros y duraderos.",
-    detalle: "Laminado Savia S/ 90 · Lifting Savia S/ 135",
   },
   {
     id: "pasillo",
@@ -98,7 +105,7 @@ export const paradas: Parada[] = [
     titulo: "Nails para cada estilo",
     texto:
       "Manicure Gel en color entero o francesa clásica, Rubber, Builder, Polygel, Manicure Rusa o Híbridas. Y si te hiciste un sistema, el retoque se realiza hasta 21 días después del servicio.",
-    detalle: "Nails desde S/ 25 · Retoques hasta 21 días",
+    detalle: "Retoques hasta 21 días",
     pendiente: "Explicación breve de Savia sobre qué técnica conviene a cada clienta.",
   },
   {
@@ -109,7 +116,6 @@ export const paradas: Parada[] = [
     titulo: "Tómate tu tiempo",
     texto:
       "Mientras te atienden te servimos té, café o bebidas frías. Y con la tarjeta de lealtad, cada visita suma.",
-    pendiente: "Confirmar si las bebidas van incluidas y cómo funciona la tarjeta de lealtad.",
   },
   {
     id: "savia",
@@ -131,7 +137,6 @@ export const pasos = [
   {
     titulo: "Elige tu día y tu hora",
     texto: "Atendemos de lunes a sábado, de 9:00 a. m. a 8:00 p. m.",
-    pendiente: "Cómo se confirma la cita y si piden adelanto.",
   },
   {
     titulo: "Ven a Savia",

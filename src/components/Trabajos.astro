@@ -1,22 +1,33 @@
 ---
 import { Picture } from "astro:assets";
 import InstagramIcon from "@phosphor-icons/core/assets/regular/instagram-logo.svg";
-import Pendiente from "./Pendiente.astro";
+import CaretDownIcon from "@phosphor-icons/core/assets/regular/caret-down.svg";
 import { negocio } from "../data/site";
 
 import nails01 from "../assets/photos/nails-01.jpg";
+import nails02 from "../assets/photos/nails-02.jpg";
+import nails03 from "../assets/photos/nails-03.jpg";
 import nails04 from "../assets/photos/nails-04.jpg";
+import nails05 from "../assets/photos/nails-05.jpg";
+import nails06 from "../assets/photos/nails-06.jpg";
 import nails07 from "../assets/photos/nails-07.jpg";
+import nails08 from "../assets/photos/nails-08.jpg";
+import nails09 from "../assets/photos/nails-09.jpg";
 import nails10 from "../assets/photos/nails-10.jpg";
+import nails12 from "../assets/photos/nails-12.jpg";
 import nails13 from "../assets/photos/nails-13.jpg";
+import nails14 from "../assets/photos/nails-14.jpg";
 import nails15 from "../assets/photos/nails-15.jpg";
 import letrero01 from "../assets/photos/nails-letrero-01.jpg";
+import letrero02 from "../assets/photos/nails-letrero-02.jpg";
 import letrero03 from "../assets/photos/nails-letrero-03.jpg";
 import letrero04 from "../assets/photos/nails-letrero-04.jpg";
 import mirada01 from "../assets/photos/mirada-01.jpg";
 import mirada02 from "../assets/photos/mirada-02.jpg";
 import mirada03 from "../assets/photos/mirada-03.jpg";
 
+// Para sumar trabajos: copia la foto en src/assets/photos, impórtala arriba y añádela aquí.
+// La galería se muestra recortada con un difuminado y el botón "Ver más" la despliega.
 // Los textos alternativos describen lo que se ve, sin nombrar técnica ni diseño.
 const trabajos = [
   { src: nails04, alt: "Uñas en rojo intenso combinadas con lunares sobre fondo rosado" },
@@ -31,17 +42,23 @@ const trabajos = [
   { src: mirada03, alt: "Clienta con gorro desechable mostrando sus cejas" },
   { src: nails13, alt: "Manos con punta rosada sobre la mesa de manicure" },
   { src: letrero04, alt: "Uñas en azul frente al letrero de Savia" },
+  { src: nails03, alt: "Uñas almendradas con punta blanca y una cereza pintada" },
+  { src: nails09, alt: "Mano con uñas rojas y blancas con lunares frente al estante de esmaltes" },
+  { src: nails02, alt: "Clienta mostrando uñas blancas perladas sobre la lámpara de secado" },
+  { src: nails06, alt: "Uñas en chocolate y nude con lunares y un lazo" },
+  { src: letrero02, alt: "Uñas en negro y nude con lunares y un lazo frente al letrero de Savia" },
+  { src: nails12, alt: "Uñas nude con detalles dorados, un fantasma y una telaraña" },
+  { src: nails14, alt: "Uñas almendradas en tono caramelo perlado" },
+  { src: nails08, alt: "Uñas cortas en rojo cereza sobre un jean" },
+  { src: nails05, alt: "Uñas cortas en rojo vino sobre un teclado" },
 ];
 ---
 
 <section id="trabajos" aria-labelledby="trabajos-titulo" class="bg-lino px-4 py-24 md:px-16">
   <div class="mx-auto flex max-w-6xl flex-col gap-12">
-    <header data-reveal class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-      <div class="flex max-w-170 flex-col gap-4">
-        <p class="caption-3 text-musgo">Trabajos recientes</p>
-        <h2 id="trabajos-titulo" class="heading-2 text-tinta">Hecho en Savia</h2>
-        <Pendiente class="text-tinta-suave" texto="Nombre del servicio de cada trabajo." />
-      </div>
+    <!-- El título usa la misma escala que el lema que sigue al recorrido. -->
+    <header data-reveal class="flex flex-col items-center gap-6 text-center">
+      <h2 id="trabajos-titulo" class="heading-3 text-tinta md:heading-1">Hecho en Savia</h2>
       <a
         href={negocio.instagramUrl}
         target="_blank"
@@ -53,21 +70,102 @@ const trabajos = [
       </a>
     </header>
 
-    <ul class="columns-2 gap-4 md:columns-3 lg:columns-4">
-      {
-        trabajos.map((t) => (
-          <li data-reveal class="mb-4 break-inside-avoid">
-            <Picture
-              src={t.src}
-              alt={t.alt}
-              widths={[320, 480, 720]}
-              sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-              formats={["avif", "webp"]}
-              class="w-full rounded-2xl"
-            />
-          </li>
-        ))
-      }
-    </ul>
+    <!-- Sin JS la galería se ve completa; con JS empieza recortada y se despliega con el botón. -->
+    <div data-galeria class="flex flex-col items-center gap-8">
+      <div class="relative w-full">
+        <div
+          id="trabajos-galeria"
+          data-galeria-marco
+          class="overflow-hidden transition-[max-height] duration-700 ease-savia in-[.js]:max-h-176 md:in-[.js]:max-h-240"
+        >
+          <ul class="columns-2 gap-4 md:columns-3 lg:columns-4">
+            {
+              trabajos.map((t) => (
+                <li data-reveal class="mb-4 break-inside-avoid">
+                  <Picture
+                    src={t.src}
+                    alt={t.alt}
+                    widths={[320, 480, 720]}
+                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+                    formats={["avif", "webp"]}
+                    class="w-full rounded-2xl"
+                  />
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div
+          data-galeria-velo
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-x-0 bottom-0 hidden h-56 bg-linear-to-b from-lino/0 via-lino/80 to-lino transition-opacity duration-500 ease-savia in-[.js]:block"
+        >
+        </div>
+      </div>
+
+      <button
+        type="button"
+        data-galeria-boton
+        aria-expanded="false"
+        aria-controls="trabajos-galeria"
+        class="group button-md hidden cursor-pointer items-center gap-2 rounded-full border border-tinta/20 px-4 py-2 text-tinta transition-colors duration-300 ease-savia hover:bg-marfil active:scale-98 in-[.js]:inline-flex"
+      >
+        <span data-galeria-texto>Ver más trabajos</span>
+        <CaretDownIcon
+          class="size-5 transition-transform duration-500 ease-savia group-aria-expanded:rotate-180"
+          aria-hidden="true"
+        />
+      </button>
+    </div>
   </div>
 </section>
+
+<script>
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { lenis } from "../scripts/scroll";
+
+  const galeria = document.querySelector<HTMLElement>("[data-galeria]");
+  const marco = galeria?.querySelector<HTMLElement>("[data-galeria-marco]");
+  const velo = galeria?.querySelector<HTMLElement>("[data-galeria-velo]");
+  const boton = galeria?.querySelector<HTMLButtonElement>("[data-galeria-boton]");
+  const texto = galeria?.querySelector<HTMLElement>("[data-galeria-texto]");
+
+  if (galeria && marco && velo && boton && texto) {
+    let abierta = false;
+
+    // Si las fotos caben sin recortar, no hacen falta ni el difuminado ni el botón.
+    const ajustar = () => {
+      if (abierta) return;
+      const cabe = marco.scrollHeight <= marco.clientHeight + 1;
+      velo.hidden = cabe;
+      boton.hidden = cabe;
+    };
+    new ResizeObserver(ajustar).observe(marco.firstElementChild as HTMLElement);
+
+    // Al terminar de crecer o encoger, la página cambia de alto.
+    marco.addEventListener("transitionend", (e) => {
+      if (e.propertyName !== "max-height") return;
+      if (abierta) marco.style.maxHeight = "none";
+      ScrollTrigger.refresh();
+      lenis?.resize();
+    });
+
+    boton.addEventListener("click", () => {
+      abierta = !abierta;
+      boton.setAttribute("aria-expanded", String(abierta));
+      texto.textContent = abierta ? "Ver menos" : "Ver más trabajos";
+      velo.style.opacity = abierta ? "0" : "1";
+
+      if (abierta) {
+        marco.style.maxHeight = `${marco.scrollHeight}px`;
+      } else {
+        // Parte del alto actual y vuelve al recorte de la clase.
+        marco.style.maxHeight = `${marco.scrollHeight}px`;
+        marco.offsetHeight;
+        marco.style.maxHeight = "";
+        const destino = galeria.closest("section");
+        if (destino) lenis ? lenis.scrollTo(destino, { duration: 0.9 }) : destino.scrollIntoView();
+      }
+    });
+  }
+</script>

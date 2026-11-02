@@ -7,14 +7,22 @@ interface Props {
   tono?: "bosque" | "marfil";
   tamano?: "md" | "sm";
   texto?: string;
+  /** Enlace de WhatsApp con otro mensaje ya escrito. */
+  href?: string;
   class?: string;
 }
 
-const { tono = "bosque", tamano = "md", texto = "Reservar por WhatsApp", class: className = "" } = Astro.props;
+const {
+  tono = "bosque",
+  tamano = "md",
+  texto = "Reservar por WhatsApp",
+  href = negocio.whatsappUrl,
+  class: className = "",
+} = Astro.props;
 ---
 
 <a
-  href={negocio.whatsappUrl}
+  href={href}
   target="_blank"
   rel="noopener"
   class:list={[

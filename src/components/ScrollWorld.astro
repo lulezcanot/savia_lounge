@@ -45,8 +45,8 @@ const alto = (d: number, ultima = false) =>
     <div aria-hidden="true" class="absolute inset-0 bg-tinta/20"></div>
 
     <!-- Riel: cada parada es un botón; queda por encima de las tarjetas. -->
-    <nav aria-label="Paradas del recorrido" class="absolute top-1/2 right-6 z-10 hidden -translate-y-1/2 lg:block">
-      <ol class="flex flex-col items-end gap-3">
+    <nav aria-label="Paradas del recorrido" class="absolute top-1/2 right-6 z-10 hidden w-56 -translate-y-1/2 lg:block">
+      <ol class="flex flex-col items-stretch gap-3">
         {
           paradas.map((p, i) => (
             <li>
@@ -54,7 +54,7 @@ const alto = (d: number, ultima = false) =>
                 type="button"
                 data-sw-dot
                 data-lugar={p.lugar}
-                class="title-5 flex cursor-pointer items-center gap-3 text-marfil/60 transition-colors duration-500 ease-savia hover:text-marfil data-active:text-marfil"
+                class="title-5 flex w-full cursor-pointer items-center justify-between gap-3 rounded-full border border-marfil/60 bg-tinta/40 px-4 py-1.5 text-marfil/80 backdrop-blur-sm transition-colors duration-500 ease-savia hover:border-marfil hover:text-marfil data-active:border-marfil data-active:bg-tinta/60 data-active:text-marfil"
               >
                 <span>{p.lugar}</span>
                 <span class="font-display text-base text-oro">{String(i + 1).padStart(2, "0")}</span>
@@ -82,21 +82,17 @@ const alto = (d: number, ultima = false) =>
     <article data-sw-stop style={alto(hero.duracion)}>
       <div class="sticky top-0 flex min-h-svh items-end px-4 pt-24 pb-16 md:items-center md:px-16 md:pb-0">
         <!-- En móvil la portada se queda en la línea de servicios, el titular y el botón. -->
-        <div class="flex max-w-170 flex-col gap-4 rounded-3xl bg-marfil/95 p-5 md:gap-6 md:p-10">
-          <p class="caption-3 text-musgo">Uñas, cejas y pestañas · {negocio.ciudad}</p>
+        <!-- Portada: eslogan, reserva, dirección y la invitación a deslizar, todo centrado. -->
+        <div class="flex max-w-150 flex-col items-center gap-5 rounded-3xl bg-marfil/95 p-6 text-center md:gap-6 md:px-12 md:py-10">
           <h1 class="heading-3 bg-linear-to-r from-tinta to-tinta-suave bg-clip-text pb-1 text-transparent md:heading-1">
             Pequeños rituales<br class="hidden md:inline" /> que nutren tu belleza
           </h1>
-          <p class="body-3 hidden max-w-170 text-tinta-suave md:block md:title-2">{negocio.subtitulo}</p>
-          <div class="flex flex-col gap-4">
-            <BotonReservar class="w-fit" />
-            <p class="caption-2 hidden items-start gap-2 text-tinta-suave md:flex">
-              <MapPinIcon class="mt-0.5 size-4 shrink-0 text-musgo" aria-hidden="true" />
-              <span>{negocio.direccionCorta}, {negocio.zona}, {negocio.ciudad} · {negocio.horarioCorto}</span>
-            </p>
-            <p class="caption-4 hidden text-tinta-suave md:block">Nails desde S/ 25 · Mirada desde S/ 15</p>
-          </div>
-          <p class="caption-4 hidden items-center gap-2 text-tinta-suave md:flex">
+          <BotonReservar />
+          <p class="caption-2 hidden items-start justify-center gap-2 text-tinta-suave md:flex">
+            <MapPinIcon class="mt-0.5 size-4 shrink-0 text-musgo" aria-hidden="true" />
+            <span>{negocio.direccionCorta}, {negocio.zona}, {negocio.ciudad} · {negocio.horarioCorto}</span>
+          </p>
+          <p class="caption-4 hidden items-center justify-center gap-2 text-tinta-suave md:flex">
             <ArrowDownIcon class="size-4" aria-hidden="true" />
             Desliza para recorrer el salón
           </p>

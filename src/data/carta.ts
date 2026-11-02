@@ -1,7 +1,6 @@
 /**
- * Carta de octubre de Savia Lounge. Fuente: brief de Savia.
- * Cuando llegue public/carta-savia-octubre.pdf, completa las descripciones de
- * Mirada marcadas como pendientes copiándolas tal cual de la carta.
+ * Carta de octubre de Savia Lounge. Fuente: public/carta-savia-octubre.pdf
+ * (precios y descripciones copiados tal cual de la carta impresa).
  */
 
 export type Servicio = {
@@ -9,8 +8,6 @@ export type Servicio = {
   precio: string;
   nota?: string;
   descripcion?: string;
-  /** Solo en Mirada: true si falta copiar la descripción de la carta. */
-  descripcionPendiente?: boolean;
 };
 
 export type Categoria = { nombre: string; nota?: string; servicios: Servicio[] };
@@ -22,13 +19,6 @@ export type Linea = {
   desde: string;
   categorias: Categoria[];
 };
-
-const pendienteMirada = (nombre: string, precio: string, extra: Partial<Servicio> = {}): Servicio => ({
-  nombre,
-  precio,
-  descripcionPendiente: !extra.descripcion,
-  ...extra,
-});
 
 export const carta: Linea[] = [
   {
@@ -148,46 +138,85 @@ export const carta: Linea[] = [
       {
         nombre: "Cejas",
         servicios: [
-          pendienteMirada("Depilación de cejas", "S/ 15"),
-          pendienteMirada("Visagismo de cejas", "S/ 30", {
+          { nombre: "Depilación de cejas", precio: "S/ 15", descripcion: "Definición y limpieza de la zona." },
+          {
+            nombre: "Visagismo de cejas",
+            precio: "S/ 30",
             descripcion: "Diseño personalizado según la armonía de tu rostro.",
-          }),
-          pendienteMirada("Tinturación de cejas con Henna", "S/ 45", {
-            nota: "Incluye visagismo y depilación",
-            descripcionPendiente: true,
-          }),
-          pendienteMirada("Laminado de cejas", "S/ 55"),
-          pendienteMirada("Laminado Savia", "S/ 90", {
+          },
+          { nombre: "Tinturación de cejas con Henna", precio: "S/ 45", descripcion: "Incluye visagismo y depilación." },
+          {
+            nombre: "Laminado de cejas",
+            precio: "S/ 55",
+            descripcion: "Ordena y direcciona el vello para una mirada más definida.",
+          },
+          {
+            nombre: "Laminado Savia",
+            precio: "S/ 90",
             descripcion: "Laminado + tinturación para una mirada más intensa y definida.",
-          }),
+          },
         ],
       },
       {
         nombre: "Pestañas",
         servicios: [
-          pendienteMirada("Lifting de pestañas", "S/ 120"),
-          pendienteMirada("Lifting Savia", "S/ 135", {
+          {
+            nombre: "Lifting de pestañas",
+            precio: "S/ 120",
+            descripcion: "Realza la curvatura natural de tus pestañas.",
+          },
+          {
+            nombre: "Lifting Savia",
+            precio: "S/ 135",
             descripcion: "Lifting + tinturación para una mirada más definida.",
-          }),
+          },
         ],
       },
       {
         nombre: "Extensiones de pestañas",
         servicios: [
-          pendienteMirada("Clásicas", "S/ 120"),
-          pendienteMirada("Efecto rimel", "S/ 120"),
-          pendienteMirada("Volumen Hawaiano", "S/ 120"),
-          pendienteMirada("Volumen griego", "S/ 140"),
-          pendienteMirada("Volumen egipcio", "S/ 160"),
-          pendienteMirada("Volumen", "S/ 160"),
+          { nombre: "Clásicas", precio: "S/ 120", descripcion: "Un acabado natural, elegante y delicadamente definido." },
+          {
+            nombre: "Efecto rimel",
+            precio: "S/ 120",
+            descripcion: "Mayor intensidad para una mirada naturalmente maquillada.",
+          },
+          {
+            nombre: "Volumen Hawaiano",
+            precio: "S/ 120",
+            descripcion: "Volumen ligero y textura suave para una mirada fresca.",
+          },
+          {
+            nombre: "Volumen griego",
+            precio: "S/ 140",
+            descripcion: "Mayor densidad y un efecto intenso con un acabado sofisticado.",
+          },
+          {
+            nombre: "Volumen egipcio",
+            precio: "S/ 160",
+            descripcion: "Intensidad y volumen para una mirada más profunda.",
+          },
+          { nombre: "Volumen", precio: "S/ 160", descripcion: "Densidad a medida según el diseño y volumen que desees." },
         ],
       },
       {
         nombre: "Adicionales",
         servicios: [
-          pendienteMirada("Tinturación de pestañas", "S/ 25"),
-          pendienteMirada("Remoción de tinte", "S/ 15"),
-          pendienteMirada("Tratamiento nutritivo de pestañas", "S/ 20"),
+          {
+            nombre: "Tinturación de pestañas",
+            precio: "S/ 25",
+            descripcion: "Intensifica el tono para una mirada más definida.",
+          },
+          {
+            nombre: "Remoción de tinte",
+            precio: "S/ 15",
+            descripcion: "Retiro delicado de pigmento en cejas o pestañas.",
+          },
+          {
+            nombre: "Tratamiento nutritivo de pestañas",
+            precio: "S/ 20",
+            descripcion: "Un cuidado nutritivo para mantenerlas sanas y saludables.",
+          },
         ],
       },
     ],

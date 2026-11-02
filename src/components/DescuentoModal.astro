@@ -1,0 +1,230 @@
+---
+import MapPinIcon from "@phosphor-icons/core/assets/fill/map-pin-fill.svg";
+import PhoneIcon from "@phosphor-icons/core/assets/fill/phone-fill.svg";
+import InstagramIcon from "@phosphor-icons/core/assets/regular/instagram-logo.svg";
+import XIcon from "@phosphor-icons/core/assets/regular/x.svg";
+import BotonReservar from "./BotonReservar.astro";
+import { descuento, negocio } from "../data/site";
+
+const whatsapp = `https://wa.me/${negocio.telefono.replace("+", "")}?text=${encodeURIComponent(descuento.mensaje)}`;
+
+// Hojas del ramo de las esquinas: [x, y, giro, escala, color, opacidad], desde la esquina inferior izquierda.
+const ramo: [number, number, number, number, string, number][] = [
+  [-70, -65, -40, 1.3, "#a9a893", 0.7],
+  [-50, 15, -62, 1.6, "#7b7d66", 1],
+  [-30, 35, -80, 1.5, "#5f624c", 1],
+  [-40, -25, -30, 1, "#c4c1ad", 0.8],
+  [20, 35, -50, 1, "#4f5240", 1],
+];
+// Ramita junto al 10 %: [x, y, giro, escala].
+const ramita: [number, number, number, number][] = [
+  [22, 80, -150, 1],
+  [30, 66, -20, 1],
+  [38, 52, -140, 1],
+  [47, 40, -25, 0.95],
+  [55, 30, -130, 0.9],
+  [64, 19, -35, 0.85],
+  [72, 8, -55, 0.8],
+];
+---
+
+<!-- Tarjeta de bienvenida: la misma que Savia entrega en el local. Se abre una sola vez por visitante. -->
+<dialog
+  data-descuento
+  aria-labelledby="descuento-titulo"
+  class="m-auto max-h-none w-full max-w-170 overflow-visible bg-transparent p-4 backdrop:bg-tinta/70 backdrop:backdrop-blur-sm"
+>
+  <div class="relative flex flex-col items-center gap-6">
+    <button
+      type="button"
+      data-descuento-cerrar
+      class="absolute -top-2 -right-2 z-10 grid size-10 cursor-pointer place-items-center rounded-full bg-marfil text-tinta shadow-lg transition-colors duration-300 ease-savia hover:bg-lino active:scale-98 md:-top-4 md:-right-4"
+    >
+      <span class="sr-only">Cerrar</span>
+      <XIcon class="size-5" aria-hidden="true" />
+    </button>
+
+    <div class="descuento-tarjeta @container w-full">
+      <div class="relative aspect-[1.6] w-full overflow-hidden rounded-[3.5cqw] bg-marfil text-tinta lining-nums shadow-2xl">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 1000 625"
+          class="absolute inset-0 size-full"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <defs>
+            <g id="descuento-hoja">
+              <path d="M0 0C55-34 145-36 210 0C145 36 55 34 0 0Z"></path>
+              <path d="M8 0H200" fill="none" stroke="#f5efe4" stroke-opacity="0.3" stroke-width="1.5"></path>
+            </g>
+            <g id="descuento-ramo">
+              {
+                ramo.map(([x, y, giro, escala, color, opacidad]) => (
+                  <use
+                    href="#descuento-hoja"
+                    fill={color}
+                    opacity={opacidad}
+                    transform={`translate(${x} ${y}) rotate(${giro}) scale(${escala})`}
+                  />
+                ))
+              }
+              <path
+                d="M0 -350C70 -300 150 -230 190 -125S255 -25 320 0"
+                fill="none"
+                stroke="#c9a04e"
+                stroke-width="2"
+              ></path>
+            </g>
+          </defs>
+
+          <!-- Sombras de hojas muy suaves en el fondo. -->
+          <use href="#descuento-hoja" fill="#eae0cf" opacity="0.7" transform="translate(300 720) rotate(-38) scale(3.2)"></use>
+          <use href="#descuento-hoja" fill="#eae0cf" opacity="0.5" transform="translate(720 -80) rotate(130) scale(2.4)"></use>
+
+          <!-- Ramos en las esquinas inferior izquierda y superior derecha. -->
+          <use href="#descuento-ramo" transform="translate(0 625)"></use>
+          <use href="#descuento-ramo" transform="translate(1000 0) rotate(180) scale(0.85)"></use>
+
+          <!-- Hojas claras en las otras dos esquinas. -->
+          <use href="#descuento-hoja" fill="#c4c1ad" opacity="0.55" transform="translate(-30 -20) rotate(30) scale(1.1)"></use>
+          <use href="#descuento-hoja" fill="#c4c1ad" opacity="0.55" transform="translate(1030 650) rotate(-150) scale(1.3)"></use>
+        </svg>
+
+        <!-- Lado izquierdo: marca y datos de contacto. -->
+        <div class="absolute top-[11%] left-[10%] flex w-[36%] flex-col items-center">
+          <p class="font-display text-[9.5cqw] leading-none font-medium tracking-[0.2em] pl-[0.2em]">SAVIA</p>
+          <p class="mt-[1.2cqw] text-[1.9cqw] leading-none tracking-[0.9em] pl-[0.9em] text-tinta-suave">LOUNGE</p>
+        </div>
+
+        <ul class="absolute top-[42%] left-[18%] flex flex-col gap-[2.2cqw] font-display text-[3.3cqw] leading-tight">
+          <li class="flex items-center gap-[2.4cqw]">
+            <span class="grid size-[5.2cqw] shrink-0 place-items-center rounded-full bg-[#4a4840] text-marfil">
+              <MapPinIcon class="size-[2.8cqw]" aria-hidden="true" />
+            </span>
+            <span>{negocio.direccionCorta}<br />{negocio.ciudad}</span>
+          </li>
+          <li class="flex items-center gap-[2.4cqw]">
+            <span class="grid size-[5.2cqw] shrink-0 place-items-center rounded-full bg-[#4a4840] text-marfil">
+              <PhoneIcon class="size-[2.8cqw]" aria-hidden="true" />
+            </span>
+            <span>{negocio.whatsappVisible.replace("+51 ", "")}</span>
+          </li>
+          <li class="flex items-center gap-[2.4cqw]">
+            <span class="grid size-[5.2cqw] shrink-0 place-items-center rounded-full bg-[#4a4840] text-marfil">
+              <InstagramIcon class="size-[3cqw]" aria-hidden="true" />
+            </span>
+            <span>{negocio.instagramUsuario}</span>
+          </li>
+        </ul>
+
+        <!-- Separador dorado. -->
+        <span aria-hidden="true" class="absolute top-[13%] bottom-[18%] left-[51%] w-[0.2cqw] bg-oro"></span>
+
+        <!-- Lado derecho: la oferta. -->
+        <div class="absolute top-[14%] right-[3%] bottom-[14%] left-[53%] flex flex-col items-center justify-center">
+          <svg aria-hidden="true" viewBox="0 0 80 100" class="relative z-10 -mb-[3cqw] ml-[6cqw] w-[9cqw] -rotate-6">
+            <path d="M14 96C26 70 44 40 72 8" fill="none" stroke="#33352a" stroke-width="1.6"></path>
+            {
+              ramita.map(([x, y, giro, escala]) => (
+                <path
+                  d="M0 0C7-6 17-6 26 0C17 6 7 6 0 0Z"
+                  fill="#33352a"
+                  transform={`translate(${x} ${y}) rotate(${giro}) scale(${escala})`}
+                />
+              ))
+            }
+          </svg>
+          <h2 id="descuento-titulo" class="flex flex-col items-center text-center">
+            <span class="font-display text-[18cqw] leading-[0.8] font-semibold">{descuento.porcentaje}</span>
+            <span class="mt-[2.2cqw] font-display text-[4.2cqw] leading-none font-medium tracking-[0.08em] whitespace-nowrap">
+              DE DESCUENTO
+            </span>
+            <span class="mt-[1.6cqw] font-display text-[2.2cqw] leading-none font-medium tracking-[0.18em] whitespace-nowrap">
+              EN TU PRIMERA VISITA
+            </span>
+          </h2>
+          <span aria-hidden="true" class="mt-[3.5cqw] h-[0.3cqw] w-[9cqw] bg-oro"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center gap-3 sm:flex-row">
+      <BotonReservar tono="marfil" texto="Reservar mi primera visita" href={whatsapp} />
+      <button
+        type="button"
+        data-descuento-cerrar
+        class="button-md cursor-pointer rounded-full px-3 py-2 text-marfil/80 transition-colors duration-300 ease-savia hover:text-marfil"
+      >
+        Ahora no
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  [data-descuento][open] .descuento-tarjeta {
+    animation: tarjeta-entra 800ms var(--ease-savia) both;
+  }
+  [data-descuento][open]::backdrop {
+    animation: velo-entra 400ms ease-out both;
+  }
+  @keyframes tarjeta-entra {
+    from {
+      opacity: 0;
+      transform: translateY(32px) rotate(-3deg) scale(0.96);
+    }
+  }
+  @keyframes velo-entra {
+    from {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-descuento][open] .descuento-tarjeta,
+    [data-descuento][open]::backdrop {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { bloquearScroll } from "../scripts/scroll";
+
+  // Se guarda por sesión: sale en cada visita nueva, pero no al recargar o volver a la portada.
+  const CLAVE = "savia-descuento-visto";
+  const dialogo = document.querySelector<HTMLDialogElement>("[data-descuento]");
+
+  const yaVisto = () => {
+    try {
+      return sessionStorage.getItem(CLAVE) === "1";
+    } catch {
+      return false;
+    }
+  };
+
+  if (dialogo) {
+    const abrir = () => {
+      if (dialogo.open) return;
+      dialogo.showModal();
+      bloquearScroll("descuento", true);
+      try {
+        sessionStorage.setItem(CLAVE, "1");
+      } catch {}
+    };
+
+    dialogo.addEventListener("close", () => bloquearScroll("descuento", false));
+    // Clic fuera de la tarjeta, en el velo, también cierra.
+    dialogo.addEventListener("click", (e) => {
+      if (e.target === dialogo) dialogo.close();
+    });
+    dialogo
+      .querySelectorAll("[data-descuento-cerrar], a")
+      .forEach((el) => el.addEventListener("click", () => dialogo.close()));
+
+    // Aparece al entrar a la web, tras un instante para que se vea la portada debajo.
+    // ?descuento en la URL la muestra siempre (para revisarla).
+    if (new URLSearchParams(location.search).has("descuento") || !yaVisto()) {
+      setTimeout(abrir, 700);
+    }
+  }
+</script>
