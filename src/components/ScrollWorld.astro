@@ -10,22 +10,30 @@ import posterImg from "../assets/photos/recorrido-poster.jpg";
 const poster = await getImage({ src: posterImg, width: 1280, format: "webp" });
 const [hero, ...resto] = paradas;
 // Altura de cada parada proporcional a la duración de su clip (mínimo una pantalla).
-const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPorSegundo) * 100}svh`;
+// La última termina cuando su borde inferior llega abajo, así que necesita una pantalla más.
+const alto = (d: number, ultima = false) =>
+  `min-height: ${(Math.max(1, d * recorrido.pantallasPorSegundo) + (ultima ? 1 : 0)) * 100}svh`;
 ---
 
-<section id="recorrido" aria-label="Recorrido por Savia Lounge" data-scroll-world class="relative grid grid-cols-1">
+<section
+  id="recorrido"
+  aria-label="Recorrido por Savia Lounge"
+  data-scroll-world
+  data-paso={JSON.stringify(recorrido.paso)}
+  class="relative grid grid-cols-1"
+>
   <!-- Capa de fondo: queda fija mientras se recorre la sección. -->
-  <div aria-hidden="true" class="sticky top-0 col-start-1 row-start-1 h-svh self-start overflow-hidden bg-tinta">
+  <div class="sticky top-0 col-start-1 row-start-1 h-svh self-start overflow-hidden bg-tinta">
     {
       paradas.map((p, i) => (
         <video
           data-sw-clip
           data-duracion={p.duracion}
+          aria-hidden="true"
           muted
           playsinline
           preload={i < 2 ? "auto" : "metadata"}
           disablepictureinpicture
-          disableremoteplayback
           poster={i === 0 ? poster.src : undefined}
           class="absolute inset-0 size-full object-cover"
           style={i === 0 ? undefined : "opacity: 0"}
@@ -34,18 +42,36 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
         </video>
       ))
     }
-    <div class="absolute inset-0 bg-tinta/20"></div>
+    <div aria-hidden="true" class="absolute inset-0 bg-tinta/20"></div>
 
-    <ol class="absolute top-1/2 right-6 hidden -translate-y-1/2 flex-col items-end gap-3 lg:flex">
-      {
-        paradas.map((p, i) => (
-          <li data-sw-dot class="title-5 flex items-center gap-3 text-marfil/60 transition-colors duration-500 ease-savia data-active:text-marfil">
-            <span>{p.lugar}</span>
-            <span class="font-display text-base text-oro">{String(i + 1).padStart(2, "0")}</span>
-          </li>
-        ))
-      }
-    </ol>
+    <!-- Riel: cada parada es un botón; queda por encima de las tarjetas. -->
+    <nav aria-label="Paradas del recorrido" class="absolute top-1/2 right-6 z-10 hidden -translate-y-1/2 lg:block">
+      <ol class="flex flex-col items-end gap-3">
+        {
+          paradas.map((p, i) => (
+            <li>
+              <button
+                type="button"
+                data-sw-dot
+                data-lugar={p.lugar}
+                class="title-5 flex cursor-pointer items-center gap-3 text-marfil/60 transition-colors duration-500 ease-savia hover:text-marfil data-active:text-marfil"
+              >
+                <span>{p.lugar}</span>
+                <span class="font-display text-base text-oro">{String(i + 1).padStart(2, "0")}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+      <button
+        type="button"
+        data-sw-next
+        class="button-sm mt-6 ml-auto flex cursor-pointer items-center gap-2 rounded-full bg-marfil/90 px-3 py-2 text-tinta transition-colors duration-300 ease-savia hover:bg-marfil active:scale-98"
+      >
+        <span data-sw-next-label>Siguiente: {paradas[1].lugar}</span>
+        <ArrowDownIcon class="size-4" aria-hidden="true" />
+      </button>
+    </nav>
     <p class="caption-4 absolute right-4 bottom-4 rounded-full bg-tinta/50 px-3 py-1 text-marfil md:right-6">
       {recorrido.aviso}
     </p>
@@ -55,7 +81,7 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
   <div class="col-start-1 row-start-1">
     <article data-sw-stop style={alto(hero.duracion)}>
       <div class="sticky top-0 flex min-h-svh items-end px-4 pt-24 pb-16 md:items-center md:px-16 md:pb-0">
-        <div class="flex max-w-170 flex-col gap-6 rounded-3xl bg-marfil/85 p-6 backdrop-blur-md md:p-10">
+        <div class="flex max-w-170 flex-col gap-6 rounded-3xl bg-marfil/95 p-6 md:p-10">
           <p class="caption-3 text-musgo">Uñas, cejas y pestañas · {negocio.ciudad}</p>
           <h1 class="heading-3 bg-linear-to-r from-tinta to-tinta-suave bg-clip-text pb-1 text-transparent md:heading-1">
             Pequeños rituales<br class="hidden md:inline" /> que nutren tu belleza
@@ -79,7 +105,7 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
 
     {
       resto.map((p, i) => (
-        <article data-sw-stop id={`parada-${p.id}`} style={alto(p.duracion)}>
+        <article data-sw-stop id={`parada-${p.id}`} style={alto(p.duracion, i === resto.length - 1)}>
           <div
             class:list={[
               "sticky top-0 flex min-h-svh items-end px-4 pt-24 pb-16 md:px-16",
@@ -87,7 +113,7 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
               p.reservar ? "md:pb-16" : "md:items-center md:pb-0",
             ]}
           >
-            <div data-reveal class="flex max-w-xl flex-col gap-4 rounded-3xl bg-marfil/85 p-6 backdrop-blur-md md:p-8">
+            <div data-reveal class="flex max-w-xl flex-col gap-4 rounded-3xl bg-marfil/95 p-6 md:p-8">
               <div class="flex items-end gap-4">
                 <span class="numeral" aria-hidden="true">{String(i + 2).padStart(2, "0")}</span>
                 <p class="caption-3 pb-2 text-musgo">{p.lugar}</p>
@@ -113,8 +139,7 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-  gsap.registerPlugin(ScrollTrigger);
+  import { interceptarGestos, lenis, reducido } from "../scripts/scroll";
 
   const seccion = document.querySelector<HTMLElement>("[data-scroll-world]");
 
@@ -122,7 +147,6 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
     const paradas = [...seccion.querySelectorAll<HTMLElement>("[data-sw-stop]")];
     const puntos = [...seccion.querySelectorAll<HTMLElement>("[data-sw-dot]")];
     const clips = [...seccion.querySelectorAll<HTMLVideoElement>("[data-sw-clip]")];
-    const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ultima = paradas.length - 1;
     const duracion = (v: HTMLVideoElement) =>
       Number.isFinite(v.duration) && v.duration > 0 ? v.duration : Number(v.dataset.duracion);
@@ -134,7 +158,7 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
 
     let activa = -1;
     let objetivo = 0;
-    let actual = 0;
+
 
     function activar(i: number) {
       if (i === activa) return;
@@ -149,8 +173,8 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
           clip.load();
         }
       }
-      actual = objetivo;
-      if (clips[i].readyState >= 1) clips[i].currentTime = actual;
+
+      if (clips[i].readyState >= 1) clips[i].currentTime = objetivo;
     }
 
     function actualizar(y: number) {
@@ -179,15 +203,154 @@ const alto = (d: number) => `min-height: ${Math.max(1, d * recorrido.pantallasPo
     );
 
     if (!reducido) {
-      // Suaviza el avance y evita encadenar saltos mientras el navegador aún busca el cuadro.
-      gsap.ticker.add(() => {
+      // El vídeo va directo a la posición del scroll: Lenis ya pone la suavidad, y un
+      // segundo suavizado aquí se notaba como retraso. Si el navegador aún está buscando
+      // el cuadro anterior, no se encadena otro salto: se reintenta al terminar (seeked).
+      const buscar = () => {
         const clip = clips[activa];
-        if (!clip) return;
-        actual += (objetivo - actual) * 0.2;
-        if (clip.readyState >= 2 && !clip.seeking && Math.abs(clip.currentTime - actual) > 1 / 60) {
-          clip.currentTime = actual;
-        }
+        if (!clip || clip.readyState < 2 || clip.seeking) return;
+        if (Math.abs(clip.currentTime - objetivo) > 1 / 60) clip.currentTime = objetivo;
+      };
+      gsap.ticker.add(buscar);
+      clips.forEach((c) => c.addEventListener("seeked", buscar));
+    }
+
+    // ── Paseo por pasos ──────────────────────────────────────────────────────────
+    // Un gesto (rueda, deslizar o tecla) lleva de una parada a la siguiente y el clip
+    // se reproduce solo durante el trayecto. Cada parada descansa en el primer cuadro
+    // de su clip, que coincide con una pausa del render; la última, en el logo.
+    const paso = JSON.parse(seccion.dataset.paso!) as { velocidad: number; minimo: number; maximo: number };
+    const lugares = puntos.map((p) => p.dataset.lugar!);
+    const siguiente = seccion.querySelector<HTMLButtonElement>("[data-sw-next]");
+    const etiquetaSiguiente = seccion.querySelector<HTMLElement>("[data-sw-next-label]");
+    const MARGEN = 4;
+
+    const descansos = () => [...tramos.slice(0, ultima).map((t) => t.start), tramos[ultima].end];
+    // Donde termina la sección: más abajo ya no se ve el paseo.
+    const salida = () => tramos[ultima].end + window.innerHeight;
+    // Segundos de vídeo acumulados hasta una posición de scroll.
+    const tiempoEn = (y: number) =>
+      tramos.reduce(
+        (s, t, i) => s + Math.min(Math.max((y - t.start) / Math.max(t.end - t.start, 1), 0), 1) * duracion(clips[i]),
+        0,
+      );
+
+    let animando = false;
+    let finAnimacion = 0;
+
+    /** Parada a la que lleva un gesto en esa dirección, o null si el gesto es scroll normal. */
+    function destino(dir: number): number | null {
+      const y = window.scrollY;
+      const d = descansos();
+      const fin = d[ultima];
+      // Debajo del paseo: al subir se vuelve a enganchar en el logo mientras aún se ve.
+      if (y > fin + MARGEN) return dir < 0 && y < salida() - MARGEN ? fin : null;
+      if (dir > 0) return d.find((r) => r > y + MARGEN) ?? null;
+      return d.findLast((r) => r < y - MARGEN) ?? null;
+    }
+
+    function ir(y: number) {
+      if (!lenis) {
+        window.scrollTo(0, y);
+        return;
+      }
+      // La duración sale de los segundos de vídeo del trayecto: el render va siempre a
+      // un ritmo parecido, con arranque y frenada suaves como las pausas de la cámara.
+      const segundos = Math.abs(tiempoEn(y) - tiempoEn(window.scrollY));
+      const duration = Math.min(Math.max(segundos / paso.velocidad, paso.minimo), paso.maximo);
+      animando = true;
+      lenis.scrollTo(y, {
+        duration,
+        easing: (t) => -(Math.cos(Math.PI * t) - 1) / 2,
+        lock: true,
+        force: true,
+        onComplete: () => {
+          animando = false;
+          finAnimacion = performance.now();
+        },
       });
     }
+
+    function evitar(e: Event) {
+      if (e.cancelable) e.preventDefault();
+    }
+
+    if (lenis) {
+      let ultimoEvento = 0;
+      // Un toque decide al primer movimiento si es del paseo o scroll normal, y lo mantiene.
+      let toque: "paseo" | "normal" | null = null;
+
+      interceptarGestos(({ deltaY, event }) => {
+        const ahora = performance.now();
+        const pausa = ahora - ultimoEvento;
+        ultimoEvento = ahora;
+
+        if (event.type === "touchstart") {
+          toque = null;
+          return true;
+        }
+        if (event.type === "touchend") return toque !== "paseo";
+        if (event.type === "touchmove" && toque) {
+          if (toque === "paseo") evitar(event);
+          return toque === "normal";
+        }
+        if (!deltaY) return true;
+
+        const dir = Math.sign(deltaY);
+        if (animando) {
+          if (event.type === "touchmove") toque = "paseo";
+          evitar(event);
+          return false;
+        }
+        const y = destino(dir);
+        if (y === null) {
+          if (event.type === "touchmove") toque = "normal";
+          return true;
+        }
+        evitar(event);
+        if (event.type === "touchmove") {
+          toque = "paseo";
+          ir(y);
+          return false;
+        }
+        // Rueda: el trackpad sigue mandando eventos por inercia después de un paso.
+        // Solo cuenta como gesto nuevo tras una pausa, o cuando la inercia ya se apagó.
+        if (pausa > 200 || (ahora - finAnimacion > 700 && Math.abs(deltaY) > 12)) ir(y);
+        return false;
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || lenis?.isStopped) return;
+        const objetivoTecla = e.target as HTMLElement;
+        if (objetivoTecla.closest("input, textarea, select, [contenteditable]")) return;
+        // La barra espaciadora sobre un botón o enlace lo activa: no se toca.
+        if (e.key === " " && objetivoTecla.closest("button, a, summary, [role='tab']")) return;
+        const dir =
+          e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)
+            ? 1
+            : e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)
+              ? -1
+              : 0;
+        if (!dir) return;
+        const y = destino(dir);
+        if (y === null) return;
+        e.preventDefault();
+        if (!animando) ir(y);
+      });
+    }
+
+    puntos.forEach((p, i) => p.addEventListener("click", () => !animando && ir(descansos()[i])));
+    siguiente?.addEventListener("click", () => {
+      if (!animando) ir(activa < ultima ? descansos()[activa + 1] : salida());
+    });
+
+    // El botón dice a dónde lleva.
+    const rotular = () => {
+      if (etiquetaSiguiente)
+        etiquetaSiguiente.textContent = activa < ultima ? `Siguiente: ${lugares[activa + 1]}` : "Seguir bajando";
+      puntos.forEach((p, j) => (j === activa ? p.setAttribute("aria-current", "step") : p.removeAttribute("aria-current")));
+    };
+    ScrollTrigger.create({ trigger: seccion, start: "top bottom", end: "bottom top", onUpdate: rotular });
+    rotular();
   }
 </script>

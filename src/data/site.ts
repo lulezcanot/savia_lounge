@@ -39,8 +39,16 @@ export const negocio = {
  * calcular cuánto scroll ocupa cada parada.
  */
 export const recorrido = {
-  /** Pantallas de scroll por cada segundo de clip. Más alto = paseo más lento. */
-  pantallasPorSegundo: 0.6,
+  /**
+   * Alto de cada parada, en pantallas por segundo de clip. Con el paseo por pasos
+   * solo cambia cuánto tarda la tarjeta en irse y entrar la siguiente.
+   */
+  pantallasPorSegundo: 0.35,
+  /**
+   * Paseo por pasos: un scroll lleva a la parada siguiente. El trayecto dura los
+   * segundos de vídeo divididos por `velocidad`, entre `minimo` y `maximo` segundos.
+   */
+  paso: { velocidad: 2.75, minimo: 1, maximo: 2.6 },
   aviso: "Recreación 3D del espacio",
 };
 

@@ -82,6 +82,7 @@ const enlaces = [
 
 <script>
   import { gsap } from "gsap";
+  import { bloquearScroll } from "../scripts/scroll";
 
   const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]")!;
   const panel = document.querySelector<HTMLElement>("[data-menu-panel]")!;
@@ -97,6 +98,8 @@ const enlaces = [
     linea1.style.transform = abierto ? "rotate(45deg)" : "";
     linea2.style.transform = abierto ? "rotate(-45deg)" : "";
     document.documentElement.classList.toggle("menu-abierto", abierto);
+    // Con el menú abierto no se desplaza la página de fondo.
+    bloquearScroll("menu", abierto);
 
     if (abierto) {
       panel.hidden = false;

@@ -113,26 +113,9 @@ const faqLd = {
 </html>
 
 <script>
-  import Lenis from "lenis";
-  import { gsap } from "gsap";
+  // Scroll suave (Lenis + ScrollTrigger): se configura en un módulo compartido.
   import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  // Scroll suave con Lenis, sincronizado con ScrollTrigger. Desactivado si se pide menos movimiento.
-  if (!reducido) {
-    const lenis = new Lenis({ anchors: true, lerp: 0.1 });
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((tiempo) => lenis.raf(tiempo * 1000));
-    gsap.ticker.lagSmoothing(0);
-
-    // Con el menú móvil abierto no se desplaza la página de fondo.
-    new MutationObserver(() => {
-      document.documentElement.classList.contains("menu-abierto") ? lenis.stop() : lenis.start();
-    }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-  }
+  import "../scripts/scroll";
 
   // Revelado de secciones: suben 32 px y aparecen una sola vez.
   const observador = new IntersectionObserver(
