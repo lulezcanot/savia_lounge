@@ -81,19 +81,20 @@ const alto = (d: number, ultima = false) =>
   <div class="col-start-1 row-start-1">
     <article data-sw-stop style={alto(hero.duracion)}>
       <div class="sticky top-0 flex min-h-svh items-end px-4 pt-24 pb-16 md:items-center md:px-16 md:pb-0">
-        <div class="flex max-w-170 flex-col gap-6 rounded-3xl bg-marfil/95 p-6 md:p-10">
+        <!-- En móvil la portada se queda en la línea de servicios, el titular y el botón. -->
+        <div class="flex max-w-170 flex-col gap-4 rounded-3xl bg-marfil/95 p-5 md:gap-6 md:p-10">
           <p class="caption-3 text-musgo">Uñas, cejas y pestañas · {negocio.ciudad}</p>
           <h1 class="heading-3 bg-linear-to-r from-tinta to-tinta-suave bg-clip-text pb-1 text-transparent md:heading-1">
             Pequeños rituales<br class="hidden md:inline" /> que nutren tu belleza
           </h1>
-          <p class="body-3 max-w-170 text-tinta-suave md:title-2">{negocio.subtitulo}</p>
+          <p class="body-3 hidden max-w-170 text-tinta-suave md:block md:title-2">{negocio.subtitulo}</p>
           <div class="flex flex-col gap-4">
             <BotonReservar class="w-fit" />
-            <p class="caption-2 flex items-start gap-2 text-tinta-suave">
+            <p class="caption-2 hidden items-start gap-2 text-tinta-suave md:flex">
               <MapPinIcon class="mt-0.5 size-4 shrink-0 text-musgo" aria-hidden="true" />
               <span>{negocio.direccionCorta}, {negocio.zona}, {negocio.ciudad} · {negocio.horarioCorto}</span>
             </p>
-            <p class="caption-4 text-tinta-suave">Nails desde S/ 25 · Mirada desde S/ 15</p>
+            <p class="caption-4 hidden text-tinta-suave md:block">Nails desde S/ 25 · Mirada desde S/ 15</p>
           </div>
           <p class="caption-4 hidden items-center gap-2 text-tinta-suave md:flex">
             <ArrowDownIcon class="size-4" aria-hidden="true" />
@@ -113,21 +114,24 @@ const alto = (d: number, ultima = false) =>
               p.reservar ? "md:pb-16" : "md:items-center md:pb-0",
             ]}
           >
-            <div data-reveal class="flex max-w-xl flex-col gap-4 rounded-3xl bg-marfil/95 p-6 md:p-8">
+            <div data-reveal class="flex max-w-xl flex-col gap-2 rounded-3xl bg-marfil/95 p-5 md:gap-4 md:p-8">
               <div class="flex items-end gap-4">
                 <span class="numeral" aria-hidden="true">{String(i + 2).padStart(2, "0")}</span>
                 <p class="caption-3 pb-2 text-musgo">{p.lugar}</p>
               </div>
-              <h2 class="heading-3 text-tinta">{p.titulo}</h2>
-              <p class="body-3 text-tinta-suave">{p.texto}</p>
-              {p.detalle && (
-                <p class="title-4 flex items-center gap-3 text-tinta">
-                  <span class="h-px w-8 bg-oro" aria-hidden="true" />
-                  {p.detalle}
-                </p>
-              )}
-              {p.pendiente && <Pendiente texto={p.pendiente} class="text-tinta-suave" />}
-              {p.reservar && <BotonReservar class="w-fit" />}
+              <h2 class="heading-4 text-tinta md:heading-3">{p.titulo}</h2>
+              {/* En móvil la tarjeta se queda en número, lugar y título para que se vea el paseo. */}
+              <div class="hidden flex-col gap-4 md:flex">
+                <p class="body-3 text-tinta-suave">{p.texto}</p>
+                {p.detalle && (
+                  <p class="title-4 flex items-center gap-3 text-tinta">
+                    <span class="h-px w-8 bg-oro" aria-hidden="true" />
+                    {p.detalle}
+                  </p>
+                )}
+                {p.pendiente && <Pendiente texto={p.pendiente} class="text-tinta-suave" />}
+                {p.reservar && <BotonReservar class="w-fit" />}
+              </div>
             </div>
           </div>
         </article>
